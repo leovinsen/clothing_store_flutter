@@ -1,4 +1,3 @@
-import 'package:ant_icons/ant_icons.dart';
 import 'package:fashion_ui/constants/colors.dart';
 import 'package:fashion_ui/model/product.dart';
 import 'package:fashion_ui/utils.dart';
@@ -8,9 +7,11 @@ class ProductScreen extends StatefulWidget {
   const ProductScreen({
     Key? key,
     required this.product,
+    required this.heroTag,
   }) : super(key: key);
 
   final Product product;
+  final String heroTag;
 
   @override
   State<ProductScreen> createState() => _ProductScreenState();
@@ -110,11 +111,14 @@ class _ProductScreenState extends State<ProductScreen> {
       );
 
   Widget _productImage() {
-    final image = Image.network(
-      widget.product.imageUrl,
-      fit: BoxFit.cover,
-      width: double.infinity,
-      height: double.infinity,
+    final image = Hero(
+      tag: widget.heroTag,
+      child: Image.network(
+        widget.product.imageUrl,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+      ),
     );
     final darkOverlay = Container(
       height: 200,

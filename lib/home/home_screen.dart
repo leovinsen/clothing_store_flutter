@@ -170,7 +170,10 @@ class _HomeScreenState extends State<HomeScreen> {
           return InkWell(
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (_) => ProductScreen(product: product),
+                builder: (_) => ProductScreen(
+                  product: product,
+                  heroTag: product.name + 'index' + i.toString(),
+                ),
               ),
             ),
             child: Column(
@@ -179,11 +182,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 Flexible(
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16.0),
-                    child: Image.network(
-                      product.imageUrl,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: double.infinity,
+                    child: Hero(
+                      tag: product.name + 'index' + i.toString(),
+                      child: Image.network(
+                        product.imageUrl,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                      ),
                     ),
                   ),
                 ),
