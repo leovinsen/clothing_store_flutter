@@ -1,11 +1,10 @@
 import 'package:ant_icons/ant_icons.dart';
 import 'package:fashion_ui/constants/colors.dart';
 import 'package:fashion_ui/model/product.dart';
+import 'package:fashion_ui/product/product_screen.dart';
 import 'package:fashion_ui/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -55,55 +54,71 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: offWhite,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-        actions: [
-          IconButton(
-            icon: Icon(AntIcons.search_outline),
-            onPressed: () => print('Search clicked'),
-          ),
-          IconButton(
-            icon: Icon(AntIcons.scan),
-            onPressed: () => print('Scan clicked'),
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              "Discover your",
-              style: TextStyle(
-                color: offBlack,
-                fontSize: 24.0,
-              ),
-            ),
-            Text(
-              "Style",
-              style: GoogleFonts.merriweatherSans().copyWith(
-                fontSize: 40.0,
-                color: orange,
-              ),
-            ),
-            const SizedBox(height: 24.0),
-            _categorySection(),
-            const SizedBox(height: 8.0),
-            Flexible(child: _itemGrid())
-          ],
-        ),
+      body: SafeArea(
+        child: _mainContent(),
       ),
     );
   }
 
+  Widget _mainContent() => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: _header(),
+          ),
+          const SizedBox(height: 8.0),
+          _categorySection(),
+          const SizedBox(height: 8.0),
+          Flexible(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: _itemGrid(),
+            ),
+          )
+        ],
+      );
+
+  Widget _header() => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          greetings(),
+          IconButton(
+            icon: Icon(AntIcons.search_outline),
+            onPressed: () => print('Search clicked'),
+          ),
+        ],
+      );
+
+  Widget greetings() => Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Discover your",
+            style: TextStyle(
+              color: offBlack,
+              fontSize: 24.0,
+            ),
+          ),
+          const Text(
+            "Style",
+            style: TextStyle(
+              fontSize: 64.0,
+              color: orange,
+              fontFamily: 'Qwigley',
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      );
+
   Widget _categorySection() => SizedBox(
         height: 60.0,
         child: ListView.separated(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
           shrinkWrap: true,
           scrollDirection: Axis.horizontal,
           itemCount: HomeScreen.categories.length,
@@ -152,29 +167,36 @@ class _HomeScreenState extends State<HomeScreen> {
         itemCount: 20,
         itemBuilder: (_, i) {
           final product = HomeScreen.products[i % 5];
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Flexible(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16.0),
-                  child: Image.network(
-                    product.imageUrl,
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: double.infinity,
+          return InkWell(
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => ProductScreen(product: product),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Flexible(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16.0),
+                    child: Image.network(
+                      product.imageUrl,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 8.0),
-              Text(
-                product.name,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
+                const SizedBox(height: 8.0),
+                Text(
+                  product.name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-              Text(formatCurrency(product.price)),
-            ],
+                Text(formatCurrency(product.price)),
+              ],
+            ),
           );
         },
         staggeredTileBuilder: (int index) =>
